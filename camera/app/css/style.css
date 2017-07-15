@@ -29,6 +29,18 @@ body {
 	z-index: -10;
 }
 
+#record {
+	display: none;
+	position: absolute;
+	top:30px;
+	right:30px;
+	background: red;
+	width: 40px;
+	height: 40px;
+	border-radius: 50%;
+	z-index: 1;
+}
+
 
 #pictureWrapper {
 	background: #000;

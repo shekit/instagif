@@ -23,10 +23,14 @@ body {
 	height: 480px;
 	width: 800px;
 	overflow: none;
-	z-index: -10;
 }
 
 #pictureWrapper {
-	background: #000;
+	background: #fff;
 	z-index: -5;
+}
+
+#coverWrapper {
+	background: #111;
+	z-index: 1;
 }

@@ -3,9 +3,12 @@ $(document).ready(function(){
 	var latestImage = null
 	var selfie = $("#selfie")
 	var video = $("#camera")
+	var recordIndicator = $("#record")
 	var track = null;
 	var chunks = []
 	var mediaRecorder = null
+	var gifLength = 5000;
+
 
 	var camera = {}
 
@@ -47,6 +50,7 @@ $(document).ready(function(){
 
 		if(mediaRecorder.state != 'recording'){
 			console.log("STARTING RECORDING")
+			recordIndicator.show()
 			mediaRecorder.start()
 		} else {
 			return
@@ -57,7 +61,7 @@ $(document).ready(function(){
 				console.log("STOPPED RECORDING")
 				mediaRecorder.stop()
 			}
-		}, 3000)
+		}, gifLength)
 
 		mediaRecorder.ondataavailable = function(e){
 			if(e.data.size>0){
@@ -73,6 +77,7 @@ $(document).ready(function(){
 			var videoUrl = window.URL.createObjectURL(blob)
 			selfie.attr({'src':videoUrl})
 
+			recordIndicator.hide();
 			showDiv("#pictureWrapper")
 
 
@@ -83,7 +88,7 @@ $(document).ready(function(){
 				showDiv("#cameraWrapper");
 				hideDiv("#pictureWrapper")
 				selfie.attr({'src':''})
-			},6000)
+			},0)
 
 		}
 	}
