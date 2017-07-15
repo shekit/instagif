@@ -1,0 +1,32 @@
+html, body, div {
+	padding: 0;
+	margin: 0;
+}
+
+body {
+	background: #000;
+}
+
+#camera, #selfie {
+	-webkit-transform: rotateY(-180deg);
+	tranform: rotateY(-180deg);
+	width: 120%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.wrapper {
+	position: absolute;
+	top:0;
+	left: 0;
+	height: 480px;
+	width: 800px;
+	overflow: none;
+	z-index: -10;
+}
+
+#pictureWrapper {
+	background: #000;
+	z-index: -5;
+}

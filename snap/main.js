@@ -3,9 +3,6 @@
 const electron = require('electron');
 const spawn = require('child_process').spawn
 const app = electron.app;
-var http = require('http')
-var server = null
-const event = require('./app/js/events')
 
 const BrowserWindow = electron.BrowserWindow;
 
@@ -18,27 +15,6 @@ app.on('ready', function(){
 	})
 
 	mainWindow.loadURL('file://'+__dirname+'/app/index.html')
-
-	mainWindow.webContents.once("did-finish-load", function(){
-		server = http.createServer()
-		var io = require('socket.io')(server);
-		server.listen(8080)
-		event.emit("up")
-		console.log("listening server port 8080")
-		io.on('connection', function(socket){
-			console.log('a user connected')
-
-			socket.on("msg", function(data){
-				console.log(data);
-			})
-
-			socket.on("gif", function(data){
-				console.log('got gif to emit')
-				socket.broadcast.emit("gif",data)
-			})
-		})
-
-	})
 
 	if(process.platform == 'darwin'){
 		mainWindow.webContents.openDevTools();
