@@ -7,21 +7,23 @@ $(document).ready(function(){
 	var track = null;
 	var chunks = []
 	var mediaRecorder = null
-	var gifLength = 5000;
-
+	var gifLength = 3000
+	var fs = require('fs')
 
 	var camera = {}
 
-	var socket = null;
+	var socket = io('http://127.0.0.1:7080')
 
-	var event = require('./js/events')
+	var delivery = null
 
-	event.on('up', function(data){
-		console.log(data)
-		
+	socket.on('connect', function(){
+		console.log("connected")
+		delivery = new Delivery(socket)
+
+		delivery.on('delivery.connect', function(del){
+			console.log("CONNECTED DELVERY")
+		})
 	})
-
-	socket = io('http://127.0.0.1:8080')
 
 	camera.showVideo = function(){
 		navigator.getUserMedia = navigator.getUserMedia ||
@@ -31,7 +33,8 @@ $(document).ready(function(){
         if(navigator.getUserMedia){
         	navigator.getUserMedia({audio:false, video:true}, function(stream){
         		video.attr({'src':URL.createObjectURL(stream)})
-        		mediaRecorder = new MediaRecorder(stream)
+        		var options = {mimeType: 'video/webm'}
+        		mediaRecorder = new MediaRecorder(stream, options)
         		track = stream.getTracks()[0]
 
         		video.on('loadedmetadata', function(e){
@@ -47,6 +50,32 @@ $(document).ready(function(){
 	}
 
 	camera.startRecording = function(){
+
+		// mediaRecorder.start(gifLength)
+		// recordIndicator.show()
+		// mediaRecorder.ondataavailable = function(blob){
+		// 	recordIndicator.hide()
+		// 	var blobURL = URL.createObjectURL(blob)
+
+		// 	setTimeout(function(){
+		// 		var reader = new FileReader()
+		// 		reader.onload = function(){
+		// 			var buffer = new Buffer(reader.result)
+		// 			fs.writeFile('gifblob.webm', buffer, {}, function(err,res){
+		// 				if(err){
+		// 					console.log("ERROR SAVING FILE")
+		// 					return
+		// 				}
+		// 				console.log("saved file")
+						
+		// 			})
+		// 		}
+		// 		reader.readAsArrayBuffer(blob)
+		// 		//mediaRecorder.save(blob, 'blob.webm')
+		// 	}, gifLength+200)
+		// }
+
+		
 
 		if(mediaRecorder.state != 'recording'){
 			console.log("STARTING RECORDING")
@@ -71,18 +100,46 @@ $(document).ready(function(){
 
 		mediaRecorder.onstop = function(e){
 			//console.log("Recording stopped")
-			socket.emit("gif",chunks)
-			var blob = new Blob(chunks, {'type':'video/webm; codecs=vp9'})
+
+			socket.emit("static-gif",chunks)
+			
+			var blob = new Blob(chunks, {'type':'video/webm'})
 			chunks = []
 			var videoUrl = window.URL.createObjectURL(blob)
 			selfie.attr({'src':videoUrl})
 
+			// var a = document.createElement('a')
+			// document.body.appendChild(a)
+			// a.style = 'display:none'
+			// a.href = videoUrl
+			// a.download = 'tester.webm'
+
+			
+
+			// a.click()
+			// window.URL.revokeObjectURL(a.href)
+
 			recordIndicator.hide();
 			showDiv("#pictureWrapper")
 
+			delivery.send(blob)
 
 
-			//console.log(mediaRecorder.state)
+			// var reader = new FileReader()
+			// reader.onload = function(){
+			// 	var buffer = new Buffer(reader.result)
+			// 	fs.writeFile('gif.webm', buffer, {}, function(err,res){
+			// 		if(err){
+			// 			console.log("ERROR SAVING FILE")
+			// 			return
+			// 		}
+			// 		console.log("saved file")
+					
+			// 	})
+			// }
+			// reader.readAsArrayBuffer(blob)
+
+			//choose to display image or not on camera screen
 			
 			setTimeout(function(){
 				showDiv("#cameraWrapper");
@@ -110,7 +167,6 @@ $(document).ready(function(){
 	}
 
 	$("#cam").on('click', function(){
-		console.log("print")
 		// take picture
 		camera.startRecording();
 	})

@@ -1,13 +1,13 @@
 $(document).ready(function(){
 
 	var selfie = $("#selfie")
-	var cover = $("#whiteWrapper")
+	var cover = $("#coverWrapper")
 
 	var socket = io('http://127.0.0.1:8080');
 
 	socket.emit("msg","hello from the snap")
 
-	socket.on("static-gif", function(data){
+	socket.on("gif", function(data){
 		console.log("GOT GIF FROM CAM")
 		cover.show()
 		var blob = new Blob(data, {'type':'video/webm; codecs=vp9'})
@@ -16,6 +16,7 @@ $(document).ready(function(){
 	})
 
 	$("body").on('click', function(){
+		console.log("cliclk")
 		cover.fadeOut(5000)
 	})
 })

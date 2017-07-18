@@ -6,6 +6,8 @@ const app = electron.app;
 var http = require('http')
 var server = null
 const event = require('./app/js/events')
+var dl = require('delivery')
+var fs = require('fs')
 
 const BrowserWindow = electron.BrowserWindow;
 
@@ -22,22 +24,37 @@ app.on('ready', function(){
 	mainWindow.webContents.once("did-finish-load", function(){
 		server = http.createServer()
 		var io = require('socket.io')(server);
-		server.listen(8080)
-		event.emit("up")
+		server.listen(7080)
 		console.log("listening server port 8080")
 		io.on('connection', function(socket){
 			console.log('a user connected')
+			var delivery = dl.listen(socket)
 
-			socket.on("msg", function(data){
-				console.log(data);
+			delivery.on('receive.success', function(file){
+				socket.broadcast.emit("gif", file)
+				fs.writeFile('gif-snap.webm', file.buffer, function(err){
+					if(err){
+						console.log('couldnt save file')
+					} else {
+						console.log('saved file')
+
+						/*var save = spawn('avconv',['-i','gif-snap.mp4','-f','mp4','-vcodec','libx264','-preset','ultrafast','-y'])
+
+						save.stdout.on('close', function(){
+							console.log("CONVERTED")
+						})*/
+					}
+				})
 			})
 
-			socket.on("gif", function(data){
-				console.log('got gif to emit')
-				socket.broadcast.emit("gif",data)
+			socket.on("static-gif", function(data){
+				socket.broadcast.emit("static-gif", data)
 			})
+
+			socket.on('gotVideo', function(){
+				console.log("start printing picture")
+			})	
 		})
-
 	})
 
 	if(process.platform == 'darwin'){

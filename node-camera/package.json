@@ -1,15 +1,15 @@
 {
-  "name": "camera",
+  "name": "node-camera",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "delivery": "0.0.6",
-    "socket.io": "^2.0.3"
+    "scp2": "^0.5.0",
+    "zerorpc": "^0.9.7"
   }
 }

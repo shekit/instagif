@@ -1,8 +1,8 @@
 {
-  "name": "camera",
+  "name": "node-snap",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "delivery": "0.0.6",
-    "socket.io": "^2.0.3"
+    "socket.io-client": "^2.0.3",
+    "socket.io-stream": "^0.9.1"
   }
 }
