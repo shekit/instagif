@@ -10,6 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "scp2": "^0.5.0",
-    "zerorpc": "^0.9.7"
+    "zerorpc": "^0.9.7",
+    "pigpio":"^0.6.1",
+    "socket.io":"^2.0.3"
   }
 }

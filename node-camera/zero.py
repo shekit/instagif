@@ -16,10 +16,12 @@ class ControlRPC(object):
 		return "connected"
 
 	def startCamera(self):
-		camera.start_preview()
+		#camera.start_preview()
+		print "start preview"
 
 	def stopCamera(self):
-		camera.stop_preview()
+		#camera.stop_preview()
+		print "stop preview"
 
 	def startRecording(self):
 		camera.start_recording(os.path.join(os.getcwd(),'gif.h264'))

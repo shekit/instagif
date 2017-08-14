@@ -35,9 +35,11 @@ var cameraState = {
 	converting: false,
 	sending: false,
 	moving: false,
-	ejected: false,
+	motorIsIn: true ,
 	snapConnected: false,
 	pythonConnected: false,
+	initiateShutdown: false,
+	shutdownBegun: false,
 	gifLength: 3000 // change this is needed
 }
 
@@ -48,7 +50,7 @@ io.on('connection', function(socket){
 	cameraState.snapConnected = true
 
 	// once snap has connected, connect to python server
-	readyConnect()
+	//readyConnect()
 
 	socket.on('disconnect', function(){
 		console.log('snap disconnected')
@@ -58,6 +60,7 @@ io.on('connection', function(socket){
 
 function readyConnect(){
 	// call the hello function in the python server
+	movePicIn()
 	client.invoke("hello", function(err, res, more){
 
 		// only start camera if connect to server
@@ -98,21 +101,17 @@ var cameraBtnPin = new Gpio(19, {
 var powerBtnPin = new Gpio(26, {
 	mode: Gpio.INPUT,
 	pullUpDown: Gpio.PUD_DOWN,
-	edge: Gpio.FALLING_EDGE
+	edge: Gpio.EITHER_EDGE
 })
-
-
-var pulseWidth = 1000
-var increment = 100
-var moveMotorForward = true
-
 
 
 
 cameraBtnPin.on('interrupt', function(level){
 	
-	if(level == 0 && !cameraState.recording && !cameraState.converting){
-		recording = true
+	if(level == 0 && !cameraState.recording && !cameraState.converting && cameraState.motorIsIn && !cameraState.moving){
+		cameraState.recording = true
+		cameraState.moving = true
+
 		console.log("Button released")
 
 		// turn on rear led and front btn led
@@ -125,23 +124,51 @@ cameraBtnPin.on('interrupt', function(level){
 		setTimeout(function(){
 			stopRecording()
 		}, cameraState.gifLength)
+	} else {
+		console.log("Cannot record right now")
+		error()
 	}
 
 })
 
+var shutdownTimer = null
+
 powerBtnPin.on('interrupt', function(level){
 
-	if(level == 0 && moving == false){
-		
-		moving = true
-		console.log("servo button released")
-		if(moveMotorForward){
-			stopCamera()
-			startMotor()
-		} else {
-			startCamera()
-			reverseMotor()
+	
+
+	if(level == 0 && cameraState.moving==false){
+		if(!cameraState.shutdownBegun){
+			//if(shutdownTimer != null){
+				
+			//}
+			
+			cameraState.initiateShutdown = false
+
+			cameraState.moving = true
+
+			console.log("servo button released")
+			clearTimeout(shutdownTimer)
+			console.log("cancel shutdown")
+
+			if(cameraState.motorIsIn){
+				movePicOut()
+			} else {
+				movePicIn()
+			}
 		}
+	}
+
+	// if button is held down for 3 secs, turn everything off
+	else if(level == 1 && cameraState.moving == false){
+		console.log("servo button pressed")
+		if(!cameraState.initiateShutdown){
+			shutdownTimer = setTimeout(function(){
+				shutdown();
+			},3000)
+		}
+
+		cameraState.initiateShutdown = true
 	}
 	
 })
@@ -222,12 +249,14 @@ function sendFile(){
 			cameraState.sending = false
 
 			// move motor and then play
+			movePicOut();
 
 			io.emit("play")
 		})
 	} else {
 		// maybe blink indicator led three times as error
 		error();
+		movePicOut(); // for testing
 		console.log("no snap to send to")
 	}
 }
@@ -247,45 +276,68 @@ function error(){
 	}
 }
 
-function startMotor(){
-	console.log("move motor forward")
-	var timer = setInterval(function(){
-		motor.servoWrite(pulseWidth)
+// pulse width 1000 is intepreted at 0˚ and 2000 as 180˚
 
-		if (pulseWidth <= 2000){
+// 20/10 leads to smooth movement
+var increment = 20
+var freq = 10
+var servoMax = 1860  // make sure these numbers are divisible by increment amt
+var servoMin = 720
+var pulseWidth = servoMin
+
+function movePicOut(){
+	console.log("move motor forward")
+
+	// move from 0 to 180
+
+	var timer = setInterval(function(){
+		motorPin.servoWrite(pulseWidth)
+
+		if (pulseWidth <= servoMax){
 			pulseWidth += increment
 		} else {
 			clearInterval(timer)
-			moveMotorForward = false
+			cameraState.motorIsIn = false
 			cameraState.moving = false
+			console.log("Motor is out")
 		}
-	}, 500)
+	}, freq)
 }
 
-function reverseMotor(){
+function movePicIn(){
 	console.log("move motor in reverse")
 	var timer = setInterval(function(){
-		motor.servoWrite(pulseWidth)
+		motorPin.servoWrite(pulseWidth)
 
-		if (pulseWidth >= 1000){
+		if (pulseWidth >= servoMin){
 			pulseWidth -= increment
 		} else {
 			clearInterval(timer)
-			moveMotorForward = true
+			cameraState.motorIsIn = true
 			cameraState.moving = false
+			console.log("Motor is in")
 		}
-	}, 500)
+	}, freq)
 }
 
 function shutdown(){
+	console.log("Shutdown everything")
+	cameraState.shutdownBegun = true
+
+	error()
 	// tell pi zero to shut down
-	/*io.emit("shutdown")
+	io.emit("shutdown")
+	if(!cameraState.motorIsIn){
+		movePicIn()
+	}
+	
+	stopCamera()
 
 	// initiate self shutdown
 	setTimeout(function(){
+		//execSync('killall python') --> throws error if python is not running
 		execSync('sudo shutdown -h now')
-	}, 1000)*/
-
-	console.log("Shutdown everything")
-	
+	}, 1500)
 }
+
+readyConnect()
