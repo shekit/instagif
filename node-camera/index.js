@@ -80,28 +80,28 @@ server.listen(8080, function(){
 
 // #5,6,13,19,26
 
-var indicatorLedPin = new Gpio(5, {
+var indicatorLedPin = new Gpio(19, {
 	mode: Gpio.OUTPUT
 })
 
-var cameraBtnLedPin = new Gpio(6, {
+var cameraBtnLedPin = new Gpio(13, {
 	mode: Gpio.OUTPUT
 })
 
-var motorPin = new Gpio(13, {
-	mode: Gpio.OUTPUT
-})
-
-var cameraBtnPin = new Gpio(19, {
+var cameraBtnPin = new Gpio(6, {
 	mode: Gpio.INPUT,
 	pullUpDown: Gpio.PUD_DOWN,
 	edge: Gpio.FALLING_EDGE
 })
 
-var powerBtnPin = new Gpio(26, {
+var powerBtnPin = new Gpio(5, {
 	mode: Gpio.INPUT,
 	pullUpDown: Gpio.PUD_DOWN,
 	edge: Gpio.EITHER_EDGE
+})
+
+var motorPin = new Gpio(26, {
+	mode: Gpio.OUTPUT
 })
 
 
