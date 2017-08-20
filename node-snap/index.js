@@ -53,23 +53,23 @@ function start(){
 }
 
 var playFadeAfter = 2000
-var playGifAfter = 10500
-var killFadeAfter = 12000
-var killGifAfter = 24000
+var playGifAfter = playFadeAfter + 10500
+var killFadeAfter = playFadeAfter + 12000
+var killGifAfter = playFadeAfter + 24000
 
 function spawnNew(alphaVal, time){
 	var omx1 = null
 	var omx2 = null
 
 	setTimeout(function(){
-		omx1 = spawn('omxplayer', ['--layer','1','--no-osd',gifLocation])
+		omx1 = spawn('omxplayer', ['--layer','1','--no-osd',fadeLocation])
 		currentlyPlayingFadePid = omx1.pid+8
 	},playFadeAfter)
 
 
 	// no idea why the pid is 8 more than what node says it is
 	setTimeout(function(){
-		omx2 = spawn('omxplayer', ['--loop','--layer','2','--no-osd',fadeLocation])
+		omx2 = spawn('omxplayer', ['--loop','--layer','2','--no-osd',gifLocation])
 		currentlyPlayingGifPid = omx2.pid+8
 	},playGifAfter)
 
