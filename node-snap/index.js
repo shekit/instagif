@@ -1,5 +1,6 @@
 const http = require('http')
 const spawn = require('child_process').spawn
+const spawnSync = require('child_process').spawnSync
 const execSync = require('child_process').execSync
 const server = http.createServer()
 const path = require('path')
@@ -36,20 +37,29 @@ socket.on('play', function(){
 })
 
 function start(){
+	// clean up and kill old running processes/gifs
+	if(currentBlackImgPid!=null){
+		spawnSync('sudo killall fbi')
+		currentBlackImgPid = null
+	}
+
+	if(currentlyPlayingFadePid!=null){
+		spawnSync('kill',[currentlyPlayingFadePid])
+		currentlyPlayingFadePid = null
+	} 
+
+	if(currentlyPlayingGifPid!=null){
+		//execSync('sudo killall omxplayer')
+		spawnSync('kill',[currentlyPlayingGifPid])
+		currentlyPlayingGifPid = null
+	}
 
 	if(fbcpPid != null){
 		execSync('sudo killall fbcp')
 		execSync('sleep 0.1')
 		execSync('clear')
 	}
-	// clean up and kill old running processes/gifs
-	if(currentBlackImgPid!=null){
-		execSync('sudo killall fbi')
-		currentBlackImgPid = null
-	}
-	if(currentlyPlayingFadePid!=null || currentlyPlayingGifPid!=null){
-		execSync('sudo killall omxplayer')
-	}
+	
 
 	var fbcp = spawn('fbcp',['&'])
 	fbcpPid = fbcp.pid
