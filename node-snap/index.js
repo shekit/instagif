@@ -10,9 +10,9 @@ const config = require('./config')
 const io = require('socket.io-client')
 const socket = io.connect('http://'+config.camPi.ip+':'+config.camPi.port) // this should be ip and port of pi 3
 
-const gifLocation = path.join(process.cwd(), 'gif.mp4')
-const fadeLocation = path.join(process.cwd(), 'fade.mp4')
-const blackPngLocation = path.join(process.cwd(), 'black.png')
+const gifLocation = path.join(__dirname, 'gif.mp4')
+const fadeLocation = path.join(__dirname, 'fade.mp4')
+const blackPngLocation = path.join(__dirname, 'black.png')
 //console.log(omx.pid)
 
 var currentlyPlayingGifPid = null
@@ -54,6 +54,7 @@ function start(){
 		currentlyPlayingGifPid = null
 	}
 
+	// important to put this as the last process to be killed
 	if(fbcpPid != null){
 		execSync('sudo killall fbcp')
 		execSync('sleep 0.1')

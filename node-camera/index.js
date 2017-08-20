@@ -216,12 +216,12 @@ function turnLedsOn(on){
 
 function convertFile(){
 	// this file will be created by python script
-	if(fs.existsSync(path.join(process.cwd(),'gif.h264'))){
+	if(fs.existsSync(path.join(__dirname,'gif.h264'))){
 
 		cameraState.converting = true
 
-		if(fs.existsSync(path.join(process.cwd(), 'gif.mp4'))){
-			fs.unlinkSync(path.join(process.cwd(), 'gif.mp4'))
+		if(fs.existsSync(path.join(__dirname, 'gif.mp4'))){
+			fs.unlinkSync(path.join(__dirname, 'gif.mp4'))
 			console.log("deleted old gif file")
 		}
 		var convert = spawn('MP4Box', ['-fps','30','-add','gif.h264','gif.mp4'])
@@ -253,10 +253,10 @@ function sendFile(){
 	if(cameraState.snapConnected){
 		cameraState.sending = true
 		// make sure this folder structure matches what is on the pi zero
-		copy.upload(path.join(process.cwd(), 'gif.mp4'), '/home/pi/instagif/node-snap/', function(err){
+		copy.upload(path.join(__dirname, 'gif.mp4'), '/home/pi/instagif/node-snap/', function(err){
 			console.log("uploaded regular version")
 
-			copy.upload(path.join(process.cwd(), 'fade.mp4'),'/home/pi/instagif/node-snap/', function(err){
+			copy.upload(path.join(__dirname, 'fade.mp4'),'/home/pi/instagif/node-snap/', function(err){
 				console.log("uploaded faded version")
 				cameraState.sending = false
 				// move motor and then play
