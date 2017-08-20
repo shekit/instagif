@@ -9,6 +9,8 @@ logging.basicConfig()
 camera = PiCamera()
 camera.resolution = (640, 480)
 
+full_path = os.path.realpath(__file__)
+
 # RPC class that can be called from node client
 class ControlRPC(object):
 
@@ -24,7 +26,7 @@ class ControlRPC(object):
 		print "stop preview"
 
 	def startRecording(self):
-		camera.start_recording(os.path.join(os.getcwd(),'gif.h264'))
+		camera.start_recording(os.path.join(os.path.dirname(full_path),'gif.h264'))
 
 	def stopRecording(self):
 		camera.stop_recording()

@@ -214,17 +214,23 @@ function turnLedsOn(on){
 	}
 }
 
+var gifh264path = path.join(__dirname,'gif.h264')
+var gifPath = path.join(__dirname, 'gif.mp4')
+var fadePath = path.join(__dirname, 'fade.mp4')
+
 function convertFile(){
 	// this file will be created by python script
-	if(fs.existsSync(path.join(__dirname,'gif.h264'))){
+	if(fs.existsSync(gifh264path)){
 
 		cameraState.converting = true
 
-		if(fs.existsSync(path.join(__dirname, 'gif.mp4'))){
-			fs.unlinkSync(path.join(__dirname, 'gif.mp4'))
+
+
+		if(fs.existsSync(gifPath)){
+			fs.unlinkSync(gifPath)
 			console.log("deleted old gif file")
 		}
-		var convert = spawn('MP4Box', ['-fps','30','-add','gif.h264','gif.mp4'])
+		var convert = spawn('MP4Box', ['-fps','30','-add',gifh264path,gifPath])
 
 		// once it is converted send it to the pi zero
 		convert.on('close', function(){
@@ -232,7 +238,7 @@ function convertFile(){
 			
 
 			// create fade in version and slow it down
-			var fadeConvert = spawn('avconv',['-i','gif.mp4','-vf','scale=320:240,fade=in:0:80, setpts=3.0*PTS','-c:v','libx264','-crf','22','-preset','fast','-c:a','copy','fade.mp4','-y'])
+			var fadeConvert = spawn('avconv',['-i',gifPath,'-vf','scale=320:240,fade=in:0:80, setpts=3.0*PTS','-c:v','libx264','-crf','22','-preset','fast','-c:a','copy',fadePath,'-y'])
 
 			fadeConvert.on('close', function(){
 				cameraState.converting = false
@@ -253,10 +259,10 @@ function sendFile(){
 	if(cameraState.snapConnected){
 		cameraState.sending = true
 		// make sure this folder structure matches what is on the pi zero
-		copy.upload(path.join(__dirname, 'gif.mp4'), '/home/pi/instagif/node-snap/', function(err){
+		copy.upload(gifPath, '/home/pi/instagif/node-snap/', function(err){
 			console.log("uploaded regular version")
 
-			copy.upload(path.join(__dirname, 'fade.mp4'),'/home/pi/instagif/node-snap/', function(err){
+			copy.upload(fadePath,'/home/pi/instagif/node-snap/', function(err){
 				console.log("uploaded faded version")
 				cameraState.sending = false
 				// move motor and then play
