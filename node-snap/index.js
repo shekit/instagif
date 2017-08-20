@@ -26,6 +26,10 @@ socket.on('disconnect', function(){
 	console.log("camera went off")
 })
 
+socket.on('shutdown', function(){
+	execSync('sudo shutdown -h now')
+})
+
 socket.on('play', function(){
 	start()
 })
@@ -34,16 +38,11 @@ function start(){
 
 	// clean up and kill old running processes/gifs
 	if(currentBlackImgPid!=null){
-		execSync('kill', currentBlackImgPid)
+		execSync('sudo killall fbi')
 		currentBlackImgPid = null
 	}
-	if(currentlyPlayingFadePid!=null){
-		execSync('kill', currentlyPlayingFadePid)
-		currentlyPlayingFadePid = null
-	}
-	if(currentlyPlayingGifPid!=null){
-		execSync('kill', currentlyPlayingGifPid)
-		currentlyPlayingGifPid = null
+	if(currentlyPlayingFadePid!=null || currentlyPlayingGifPid!=null){
+		execSync('sudo killall omxplayer')
 	}
 
 	var img = spawn('sudo',['fbi','-T','2','-noverbose',blackPngLocation])
@@ -53,7 +52,7 @@ function start(){
 }
 
 var playFadeAfter = 2000
-var playGifAfter = playFadeAfter + 10500
+var playGifAfter = 10500
 var killFadeAfter = playFadeAfter + 12000
 var killGifAfter = playFadeAfter + 24000
 
@@ -84,13 +83,13 @@ function spawnNew(alphaVal, time){
 	}, killFadeAfter)
 
 	//kill the gif video
-	setTimeout(function(){
+	/*setTimeout(function(){
 		console.log("kill video", omx2.pid+8);
 		if(currentlyPlayingGifPid!=null){
 			var kill = spawn('kill',[omx2.pid+8]);
 			currentlyPlayingGifPid = null
 		}
-	}, killGifAfter)
+	}, killGifAfter)*/
 }
 
 server.listen(6060, function(){
