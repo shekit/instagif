@@ -11,6 +11,7 @@ const socket = io.connect('http://'+config.camPi.ip+':'+config.camPi.port) // th
 
 const gifLocation = path.join(process.cwd(), 'gif.mp4')
 const fadeLocation = path.join(process.cwd(), 'fade.mp4')
+const blackPngLocation = path.join(process.cwd(), 'black.png')
 //console.log(omx.pid)
 
 var currentlyPlayingGifPid = null
@@ -45,7 +46,7 @@ function start(){
 		currentlyPlayingGifPid = null
 	}
 
-	var img = spawn('sudo',['fbi','-T','2','-noverbose','black.png'])
+	var img = spawn('sudo',['fbi','-T','2','-noverbose',blackPngLocation])
 	currentBlackImgPid = img.pid+8;
 
 	spawnNew()
