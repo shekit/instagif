@@ -1,5 +1,5 @@
-//globally install zerorpc and pigpio
 // run with sudo for pigpio
+// remember to rename and include config.js file in same folder
 
 const zerorpc = require('zerorpc')  // to communicate with python script controlling camera
 const spawn = require('child_process').spawn
@@ -94,7 +94,7 @@ var cameraBtnPin = new Gpio(6, {
 	edge: Gpio.FALLING_EDGE
 })
 
-var powerBtnPin = new Gpio(5, {
+var powerBtnPin = new Gpio(5f, {
 	mode: Gpio.INPUT,
 	pullUpDown: Gpio.PUD_DOWN,
 	edge: Gpio.EITHER_EDGE
@@ -228,9 +228,18 @@ function convertFile(){
 
 		// once it is converted send it to the pi zero
 		convert.on('close', function(){
-			console.log("converted")
-			cameraState.converting = false
-			sendFile()
+			console.log("regular converted")
+			
+
+			// create fade in version and slow it down
+			var fadeConvert = spawn('avconv',['-i','gif.mp4','-vf','scale=320:240,fade=in:0:80, setpts=3.0*PTS','-c:v','libx264','-crf','22','-preset','fast','-c:a','copy','fade.mp4','-y'])
+
+			fadeConvert.on('close', function(){
+				cameraState.converting = false
+				console.log("fade version created")
+				sendFile()
+			})
+			
 		})
 	} else {
 		console.log("no file yet")
@@ -244,19 +253,22 @@ function sendFile(){
 	if(cameraState.snapConnected){
 		cameraState.sending = true
 		// make sure this folder structure matches what is on the pi zero
-		copy.upload(path.join(process.cwd(), 'gif.mp4'), '/home/pi/node-snap/', function(err){
-			console.log("uploaded")
-			cameraState.sending = false
+		copy.upload(path.join(process.cwd(), 'gif.mp4'), '/home/pi/instagif/node-snap/', function(err){
+			console.log("uploaded regular version")
 
-			// move motor and then play
-			movePicOut();
+			copy.upload(path.join(process.cwd(), 'fade.mp4'),'/home/pi/instagif/node-snap/', function(err){
+				console.log("uploaded faded version")
+				cameraState.sending = false
+				// move motor and then play
+				movePicOut();
 
-			io.emit("play")
+				// tell snap pi to start playing gif
+				io.emit("play")
+			})
 		})
 	} else {
 		// maybe blink indicator led three times as error
 		error();
-		movePicOut(); // for testing
 		console.log("no snap to send to")
 	}
 }
