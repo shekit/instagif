@@ -17,6 +17,7 @@ const blackPngLocation = path.join(process.cwd(), 'black.png')
 var currentlyPlayingGifPid = null
 var currentlyPlayingFadePid = null
 var currentBlackImgPid = null
+var fbcpPid = null
 
 socket.on('connect', function(){
 	console.log("connected to camera")
@@ -36,6 +37,11 @@ socket.on('play', function(){
 
 function start(){
 
+	if(fbcpPid != null){
+		execSync('sudo killall fbcp')
+		execSync('sleep 0.1')
+		execSync('clear')
+	}
 	// clean up and kill old running processes/gifs
 	if(currentBlackImgPid!=null){
 		execSync('sudo killall fbi')
@@ -44,6 +50,9 @@ function start(){
 	if(currentlyPlayingFadePid!=null || currentlyPlayingGifPid!=null){
 		execSync('sudo killall omxplayer')
 	}
+
+	var fbcp = spawn('fbcp',['&'])
+	fbcpPid = fbcp.pid
 
 	var img = spawn('sudo',['fbi','-T','2','-noverbose',blackPngLocation])
 	currentBlackImgPid = img.pid+8;
