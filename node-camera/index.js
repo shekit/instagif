@@ -94,7 +94,7 @@ var cameraBtnPin = new Gpio(6, {
 	edge: Gpio.FALLING_EDGE
 })
 
-var powerBtnPin = new Gpio(5f, {
+var powerBtnPin = new Gpio(5, {
 	mode: Gpio.INPUT,
 	pullUpDown: Gpio.PUD_DOWN,
 	edge: Gpio.EITHER_EDGE
