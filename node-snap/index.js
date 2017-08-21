@@ -152,7 +152,7 @@ function spawnNewAlpha(alphaVal, time){
 	// no idea why the pid is 8 more than what node says it is
 	setTimeout(function(){
 		omx = spawn('omxplayer', ['--loop','--layer',time,'--no-osd','--alpha',alphaVal,gifLocation])
-		console.log("spawn video", omx.pid+8)
+		console.log("spawn video", alphaVal, omx.pid)
 
 		if(alphaVal == alphas.length-1){
 			// set current pid to last fully opaque videos pid
@@ -164,7 +164,7 @@ function spawnNewAlpha(alphaVal, time){
 	// kill every video other than the last fully opaque video
 	if(alphaVal!=alphas.length-1){
 		setTimeout(function(){
-			console.log("kill video", omx.pid+8);
+			console.log("kill video", alphaVal, omx.pid);
 			var kill = spawn('kill',[omx.pid+8]);
 		}, time*newAlphaGif+alphaGifBuffer)
 	}

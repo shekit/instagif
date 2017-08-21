@@ -247,7 +247,7 @@ function convertFile(){
 
 			convert.on('close', function(){
 				console.log("regular alpha version converted")
-
+				cameraState.converting = false
 				sendFile()
 			})
 
