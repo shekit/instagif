@@ -14,8 +14,10 @@ const config = require('./config')
 
 const Copy = require('scp2').Client
 
+var pythonPath = path.join(__dirname,'zero.py')
+
 spawn('fbcp',['&'])
-spawn('python',['zero.py','&'])
+spawn('python',[pythonPath,'&'])
 // address and details of pi zero w
 // to which the picture will be copied
 var copy = new Copy({
