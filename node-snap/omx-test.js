@@ -23,7 +23,7 @@ function start(){
 	
 }
 
-function spawnNew(alphaVal, time){
+function spawnNewAlpha(alphaVal, time){
 	var omx = null
 
 	// no idea why the pid is 8 more than what node says it is

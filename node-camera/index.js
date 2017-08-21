@@ -215,6 +215,14 @@ function turnLedsOn(on){
 	}
 }
 
+function turnIndicatorLedsOn(on){
+	if(on){
+		indicatorLedPin.digitalWrite(1)
+	} else {
+		indicatorLedPin.digitalWrite(0)
+	}
+}
+
 var gifh264path = path.join(__dirname,'gif.h264')
 var gifPath = path.join(__dirname, 'gif.mp4')
 var fadePath = path.join(__dirname, 'fade.mp4')
@@ -224,7 +232,7 @@ function convertFile(){
 	if(fs.existsSync(gifh264path)){
 
 		cameraState.converting = true
-
+		turnIndicatorLedsOn(true)
 
 
 		if(fs.existsSync(gifPath)){
@@ -234,20 +242,32 @@ function convertFile(){
 		var convert = spawn('MP4Box', ['-fps','30','-add',gifh264path,gifPath])
 
 		// once it is converted send it to the pi zero
-		convert.on('close', function(){
-			console.log("regular converted")
-			
 
-			// create fade in version and slow it down
-			var fadeConvert = spawn('avconv',['-i',gifPath,'-vf','scale=320:240,fade=in:0:80, setpts=3.0*PTS','-c:v','libx264','-crf','22','-preset','fast','-c:a','copy',fadePath,'-y'])
+		if(config.useAlpha){
 
-			fadeConvert.on('close', function(){
-				cameraState.converting = false
-				console.log("fade version created")
+			convert.on('close', function(){
+				console.log("regular alpha version converted")
+
 				sendFile()
 			})
+
+		} else {
+			convert.on('close', function(){
+				console.log("regular converted")
+				
+
+				// create fade in version and slow it down
+				var fadeConvert = spawn('avconv',['-i',gifPath,'-vf','scale=320:240,fade=in:0:80, setpts=3.0*PTS','-c:v','libx264','-crf','22','-preset','fast','-c:a','copy',fadePath,'-y'])
+
+				fadeConvert.on('close', function(){
+					cameraState.converting = false
+					console.log("fade version created")
+					sendFile()
+				})
 			
-		})
+			})
+		}
+		
 	} else {
 		console.log("no file yet")
 		// try again in sometime
@@ -259,26 +279,43 @@ function sendFile(){
 
 	if(cameraState.snapConnected){
 		cameraState.sending = true
-		// make sure this folder structure matches what is on the pi zero
-		copy.upload(gifPath, '/home/pi/instagif/node-snap/', function(err){
-			console.log("uploaded regular version")
+		
 
-			copy.upload(fadePath,'/home/pi/instagif/node-snap/', function(err){
-				console.log("uploaded faded version")
+		if(config.useAlpha){
+			// make sure this folder structure matches what is on the pi zero
+			copy.upload(gifPath, '/home/pi/instagif/node-snap', function(err){
 				cameraState.sending = false
+				turnIndicatorLedsOn(false)
 				// move motor and then play
 				movePicOut();
 
 				// tell snap pi to start playing gif
 				io.emit("play")
 			})
-		})
+		} else {
+			copy.upload(gifPath, '/home/pi/instagif/node-snap/', function(err){
+				console.log("uploaded regular version")
+
+				copy.upload(fadePath,'/home/pi/instagif/node-snap/', function(err){
+					console.log("uploaded faded version")
+					turnIndicatorLedsOn(false)
+					cameraState.sending = false
+					// move motor and then play
+					movePicOut();
+
+					// tell snap pi to start playing gif
+					io.emit("play")
+				})
+			})
+		}
 	} else {
 		// maybe blink indicator led three times as error
 		error();
 		console.log("no snap to send to")
 	}
 }
+
+
 
 function error(){
 	var onTimes = [0,300,600]

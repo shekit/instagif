@@ -20,6 +20,10 @@ var currentlyPlayingFadePid = null
 var currentBlackImgPid = null
 var fbcpPid = null
 
+var alphas = [0,10,50,100,150,200,255]
+var newAlphaGif = 3000
+var alphaGifBuffer = 6000
+
 socket.on('connect', function(){
 	console.log("connected to camera")
 })
@@ -39,26 +43,45 @@ socket.on('play', function(){
 function start(){
 	// clean up and kill old running processes/gifs
 	if(currentBlackImgPid!=null){
-		spawnSync('sudo killall fbi')
+		try{
+			spawnSync('sudo killall fbi')
+		} catch(err){
+			console.log("Error in killing fbi image")
+		}
 		currentBlackImgPid = null
 	}
 
-	if(currentlyPlayingFadePid!=null){
-		spawnSync('kill',[currentlyPlayingFadePid])
-		currentlyPlayingFadePid = null
-	} 
-
 	if(currentlyPlayingGifPid!=null){
-		//execSync('sudo killall omxplayer')
-		spawnSync('kill',[currentlyPlayingGifPid])
+
+		try{
+			spawnSync('kill',[currentlyPlayingGifPid])
+		} catch(err){
+			console.log("Error in killing regular gif")
+		}
+		
 		currentlyPlayingGifPid = null
 	}
 
+	// only do if we arent using the alpha overlay omxplayer
+	if(!config.useAlpha && currentlyPlayingFadePid!=null){
+		try{
+			spawnSync('kill',[currentlyPlayingFadePid])
+		} catch(err){
+			console.log("Error in killing fade gif")
+		}
+		
+		currentlyPlayingFadePid = null
+	} 
+
 	// important to put this as the last process to be killed
 	if(fbcpPid != null){
-		execSync('sudo killall fbcp')
-		execSync('sleep 0.1')
-		execSync('clear')
+		try {
+			execSync('sudo killall fbcp')
+			execSync('sleep 0.1')
+			execSync('clear')
+		} catch(err){
+			console.log("Error while trying to kill fbcp")
+		}
 	}
 	
 
@@ -68,7 +91,18 @@ function start(){
 	var img = spawn('sudo',['fbi','-T','2','-noverbose',blackPngLocation])
 	currentBlackImgPid = img.pid+8;
 
-	spawnNew()
+	if(config.useAlpha){
+
+		setTimeout(function(){
+			for(var i=0;i<alphas.length;i++){
+				spawnNewAlpha(alphas[i],i)
+			}
+		}, 2000)
+
+	} else {
+		spawnNew()
+	}
+	
 }
 
 var playFadeAfter = 2000
@@ -110,6 +144,30 @@ function spawnNew(alphaVal, time){
 			currentlyPlayingGifPid = null
 		}
 	}, killGifAfter)*/
+}
+
+function spawnNewAlpha(alphaVal, time){
+	var omx = null
+
+	// no idea why the pid is 8 more than what node says it is
+	setTimeout(function(){
+		omx = spawn('omxplayer', ['--loop','--layer',time,'--no-osd','--alpha',alphaVal,gifLocation])
+		console.log("spawn video", omx.pid+8)
+
+		if(alphaVal == alphas.length-1){
+			// set current pid to last fully opaque videos pid
+			currentlyPlayingGifPid = omx.pid + 8
+		}
+			
+	},time*newAlphaGif)
+
+	// kill every video other than the last fully opaque video
+	if(alphaVal!=alphas.length-1){
+		setTimeout(function(){
+			console.log("kill video", omx.pid+8);
+			var kill = spawn('kill',[omx.pid+8]);
+		}, time*newAlphaGif+alphaGifBuffer)
+	}
 }
 
 server.listen(6060, function(){
