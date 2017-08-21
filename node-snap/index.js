@@ -39,17 +39,17 @@ socket.on('shutdown', function(){
 
 socket.on('download', function(data){
 	if(data.both){
-		var dl = spawn('wget',[dlUrl+'/gif.mp4'])
+		var dl = spawn('wget',[dlUrl+'/gif.mp4','-N','-P',__dirname])
 
 		dl.on('close', function(){
-			var dl2 = spawn('wget', [dlUrl+'/fade.mp4'])
+			var dl2 = spawn('wget', [dlUrl+'/fade.mp4','-N','-P',__dirname])
 
 			dl2.on('close', function(){
 				socket.emit('downloaded')
 			})
 		})
 	} else {
-		var dl = spawn('wget',[dlUrl+'/gif.mp4'])
+		var dl = spawn('wget',[dlUrl+'/gif.mp4','-N','-P',__dirname])
 
 		dl.on('close', function(){
 			socket.emit('downloaded')
