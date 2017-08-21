@@ -339,7 +339,7 @@ var increment = 20
 var freq = 10
 var servoMax = 1860  // make sure these numbers are divisible by increment amt
 var servoMin = 720
-var pulseWidth = servoMin
+var pulseWidth = servoMax
 
 function movePicOut(){
 	console.log("move motor forward")
@@ -349,8 +349,8 @@ function movePicOut(){
 	var timer = setInterval(function(){
 		motorPin.servoWrite(pulseWidth)
 
-		if (pulseWidth <= servoMax){
-			pulseWidth += increment
+		if (pulseWidth >= servoMin){
+			pulseWidth -= increment
 		} else {
 			clearInterval(timer)
 			cameraState.motorIsIn = false
@@ -365,8 +365,8 @@ function movePicIn(){
 	var timer = setInterval(function(){
 		motorPin.servoWrite(pulseWidth)
 
-		if (pulseWidth >= servoMin){
-			pulseWidth -= increment
+		if (pulseWidth <= servoMax){
+			pulseWidth += increment
 		} else {
 			clearInterval(timer)
 			cameraState.motorIsIn = true
