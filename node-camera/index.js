@@ -232,7 +232,7 @@ function convertFile(){
 	if(fs.existsSync(gifh264path)){
 
 		cameraState.converting = true
-		turnIndicatorLedsOn(true)
+		//turnIndicatorLedsOn(true)
 
 
 		if(fs.existsSync(gifPath)){
@@ -285,7 +285,7 @@ function sendFile(){
 			// make sure this folder structure matches what is on the pi zero
 			copy.upload(gifPath, '/home/pi/instagif/node-snap', function(err){
 				cameraState.sending = false
-				turnIndicatorLedsOn(false)
+				//turnIndicatorLedsOn(false)
 				// move motor and then play
 				movePicOut();
 
@@ -298,7 +298,7 @@ function sendFile(){
 
 				copy.upload(fadePath,'/home/pi/instagif/node-snap/', function(err){
 					console.log("uploaded faded version")
-					turnIndicatorLedsOn(false)
+					//turnIndicatorLedsOn(false)
 					cameraState.sending = false
 					// move motor and then play
 					movePicOut();
