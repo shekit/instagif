@@ -26,7 +26,7 @@ class ControlRPC(object):
 		#print "stop preview"
 
 	def startRecording(self):
-		camera.start_recording(os.path.join(os.path.dirname(full_path),'gif.h264'))
+		camera.start_recording(os.path.join(os.path.dirname(full_path),'gif.h264'), resize=(320,240))
 
 	def stopRecording(self):
 		camera.stop_recording()
