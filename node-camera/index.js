@@ -4,6 +4,7 @@
 const zerorpc = require('zerorpc')  // to communicate with python script controlling camera
 const spawn = require('child_process').spawn
 const execSync = require('child_process').execSync
+const spawnSync = require('child_process').spawnSync
 const fs = require('fs')
 const path = require('path')
 
@@ -13,6 +14,8 @@ const config = require('./config')
 
 const Copy = require('scp2').Client
 
+spawnSync('fbcp',['&'])
+spawnSync('python',['zero.py'])
 // address and details of pi zero w
 // to which the picture will be copied
 var copy = new Copy({
