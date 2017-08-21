@@ -22,13 +22,30 @@ var copy = new Copy({
 	password: config.snapPi.password
 })
 
+// make sure public directory exists to store gifs
+if(!fs.existsSync(path.join(__dirname,'public'))){
+	console.log("make public folder")
+	fs.mkdirSync(path.join(__dirname,'public'))
+}
+
 // Zero RPC client, connect to python server at specific port
 var client = new zerorpc.Client()
 client.connect("tcp://127.0.0.1:4242")
 
-// socket connection with snap pi zero W
+var finalhandler = require('finalhandler')
+var serveStatic = require('serve-static')
+
+// Serve up public folder 
+var serve = serveStatic(path.join(__dirname,'public'))
+
+
 const http = require('http')
-var server = http.createServer()
+
+var server = http.createServer(function onRequest (req, res) {
+  serve(req, res, finalhandler(req, res))
+})
+
+// socket connection with snap pi zero W
 var io = require('socket.io')(server)
 
 var cameraState = {
@@ -52,6 +69,14 @@ io.on('connection', function(socket){
 
 	// once snap has connected, connect to python server
 	//readyConnect()
+
+	socket.on('downloaded', function(){
+		cameraState.sending = false
+		movePicOut();
+
+		// tell snap pi to start playing gif
+		io.emit("play")
+	})
 
 	socket.on('disconnect', function(){
 		console.log('snap disconnected')
@@ -224,8 +249,8 @@ function turnIndicatorLedsOn(on){
 }
 
 var gifh264path = path.join(__dirname,'gif.h264')
-var gifPath = path.join(__dirname, 'gif.mp4')
-var fadePath = path.join(__dirname, 'fade.mp4')
+var gifPath = path.join(__dirname, 'public','gif.mp4')
+var fadePath = path.join(__dirname, 'public','fade.mp4')
 
 function convertFile(){
 	// this file will be created by python script
@@ -248,7 +273,11 @@ function convertFile(){
 			convert.on('close', function(){
 				console.log("regular alpha version converted")
 				cameraState.converting = false
-				sendFile()
+				if(config.useWget){
+					readyToDownload(false)
+				} else {
+					sendFile()
+				}
 			})
 
 		} else {
@@ -262,7 +291,13 @@ function convertFile(){
 				fadeConvert.on('close', function(){
 					cameraState.converting = false
 					console.log("fade version created")
-					sendFile()
+
+					if(config.useWget){
+						readyToDownload(true)
+					} else {
+						sendFile()
+					}
+					
 				})
 			
 			})
@@ -272,6 +307,15 @@ function convertFile(){
 		console.log("no file yet")
 		// try again in sometime
 	}
+}
+
+function readyToDownload(both){
+	if(both){
+		io.emit("download",{both:both})
+	} else {
+		io.emit("download",{both:both})
+	}
+	
 }
 
 function sendFile(){

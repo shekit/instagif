@@ -12,6 +12,8 @@
     "scp2": "^0.5.0",
     "zerorpc": "^0.9.7",
     "pigpio":"^0.6.1",
-    "socket.io":"^2.0.3"
+    "socket.io":"^2.0.3",
+    "finalhandler": "^1.0.4",
+    "serve-static": "^1.12.4"
   }
 }

@@ -9,6 +9,7 @@ const config = require('./config')
 // this connects to the main camera raspberry pi 3
 const io = require('socket.io-client')
 const socket = io.connect('http://'+config.camPi.ip+':'+config.camPi.port) // this should be ip and port of pi 3
+const dlUrl = 'http://'+config.camPi.ip+':'+config.camPi.port
 
 const gifLocation = path.join(__dirname, 'gif.mp4')
 const fadeLocation = path.join(__dirname, 'fade.mp4')
@@ -34,6 +35,26 @@ socket.on('disconnect', function(){
 
 socket.on('shutdown', function(){
 	execSync('sudo shutdown -h now')
+})
+
+socket.on('download', function(data){
+	if(data.both){
+		var dl = spawn('wget',[dlUrl+'/gif.mp4'])
+
+		dl.on('close', function(){
+			var dl2 = spawn('wget', [dlUrl+'/fade.mp4'])
+
+			dl2.on('close', function(){
+				socket.emit('downloaded')
+			})
+		})
+	} else {
+		var dl = spawn('wget',[dlUrl+'/gif.mp4'])
+
+		dl.on('close', function(){
+			socket.emit('downloaded')
+		})
+	}
 })
 
 socket.on('play', function(){

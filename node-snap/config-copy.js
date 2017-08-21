@@ -5,5 +5,6 @@ module.exports = {
 		ip: "",
 		port: ""
 	},
-	useAlpha:true // make sure this is same bool value in snap and camera
+	useAlpha:true, // make sure this is same bool value in snap and camera
+	useWget:true
 }
