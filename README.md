@@ -2,6 +2,8 @@
 
 I built a camera that snaps a GIF and ejects a little cartridge so you can hold a moving photo in your hand! I'm calling it "Instagif". Don't ask me why I built it, it sounded like a fun challenge and I always wanted to hold a moving photo. If it isn't obvious, I was inspired by one of the classic polaroid cameras.
 
+## Build Process
+
 You can read more about the entire build process here:
 
 ## Hardware Files
@@ -10,10 +12,10 @@ All the 3D print files and Eagle files can be found in a separate repo here:
 
 ## Setting up the Raspberry Pi's:
 
-The camera uses 2 pi's:
+The camera uses 2 pi's. Follow the steps exactly as described and it should get you up and running without any problems.
 
-* Raspberry Pi 3 - Let's call this CamPi
-* Raspberry Pi Zero W - Let's call this SnapPi
+* Raspberry Pi 3 - Let's call this CamPi (runs the camera)
+* Raspberry Pi Zero W - Let's call this SnapPi (runs the cartridge)
 
 ### Raspberry Pi 3 - CamPi
 
@@ -171,7 +173,6 @@ The camera uses 2 pi's:
 			python zero.py &
 			sudo node index.js
 		chmod +x launch.sh
-
 	```
 21. Create SystemD file:
 	* ```sudo nano /lib/systemd/system/instagif.service```
@@ -188,7 +189,6 @@ The camera uses 2 pi's:
 
 			[Install]
 			WantedBy=multi-user.target
-
 		```
 	* Change file permissions:
 		* ```sudo chmod 644 /lib/systemd/system/instagif.service```
@@ -206,7 +206,6 @@ The camera uses 2 pi's:
 		sudo tar xzvf ~/node-v4.2.4-linux-armv6l.tar.gz --strip=1
 		# Test node version with node -v
 		sudo npm install -g npm
-
 	```
 3. Repeat steps 10-14, **enter IP 192.168.1.2**
 4. Install as above:
@@ -229,7 +228,6 @@ The camera uses 2 pi's:
 			cd ~/instagif/node-snap
 			node index.js
 		chmod +x launch.sh
-
 	```
 7. Create SystemD file:
 	* ```sudo nano /lib/systemd/system/instagif.service```
