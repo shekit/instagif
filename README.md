@@ -74,7 +74,7 @@ The camera uses 2 pi's:
 		* BLANK_TIME=0
 		* POWERDOWN_TIME=0
 	* ```sudo nano /boot/cmdline.txt```
-		* Add this to the end of the single line after a <space> ```consoleblank=0```
+		* Add this to the end of the single line: ``` consoleblank=0```
 12. Install DHCP:
 	* ```sudo apt-get install isc-dhcp-server```
 	* ```sudo nano /etc/dhcp/dhcpd.conf```
@@ -163,14 +163,14 @@ The camera uses 2 pi's:
 	```
 20. Create Launcher Script:
 	* ```
-	cd ~
-	sudo nano launch.sh
-		#!/bin/bash
-		fbcp &
-		cd ~/instagif/node-camera
-		python zero.py &
-		sudo node index.js
-	chmod +x launch.sh
+		cd ~
+		sudo nano launch.sh
+			#!/bin/bash
+			fbcp &
+			cd ~/instagif/node-camera
+			python zero.py &
+			sudo node index.js
+		chmod +x launch.sh
 
 	```
 21. Create SystemD file:
@@ -208,7 +208,7 @@ The camera uses 2 pi's:
 		sudo npm install -g npm
 
 	```
-3. Repeat steps 10-14, *enter IP 192.168.1.2*
+3. Repeat steps 10-14, **enter IP 192.168.1.2**
 4. Install as above:
 	* omxplayer
 	* cmake
@@ -223,12 +223,12 @@ The camera uses 2 pi's:
 	```
 6. Create Launcher Script:
 	* ```
-	cd ~
-	sudo nano launch.sh
-		#!/bin/bash
-		cd ~/instagif/node-snap
-		node index.js
-	chmod +x launch.sh
+		cd ~
+		sudo nano launch.sh
+			#!/bin/bash
+			cd ~/instagif/node-snap
+			node index.js
+		chmod +x launch.sh
 
 	```
 7. Create SystemD file:
