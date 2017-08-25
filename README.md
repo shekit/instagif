@@ -21,37 +21,37 @@ The camera uses 2 pi's:
 2. Plug into HDMI monitor
 3. Login with default user:pi and password: raspberry
 4. Perform Initial Setup:
- * ```sudo raspi-config```
-  * Advanced Options > Expand Filesystem
-  * Change User Password
-  * Localisation Options > Locale and Timezone
-  * Localisation Options > Keyboard Layout
-  * Enable Interfacing > Camera
-  * Enable Interfacing > SSH
-  * Boot Options > Console > Console Autologin
- * sudo reboot -h now
+	* ```sudo raspi-config```
+		* Advanced Options > Expand Filesystem
+		* Change User Password
+		* Localisation Options > Locale and Timezone
+		* Localisation Options > Keyboard Layout
+		* Enable Interfacing > Camera
+		* Enable Interfacing > SSH
+		* Boot Options > Console > Console Autologin
+ 	* ```sudo reboot -h now```
 5. Setup Wifi Network:
- * ```sudo nano /etc/wpa_supplicant/wpa_supplicant.conf```
- * Add your ssid and password
-  * ```
+	* ```sudo nano /etc/wpa_supplicant/wpa_supplicant.conf```
+	* Add your ssid and password
+	```
     network={
 	ssid=”<Your ssid>”
 	psk=”<Your pass>”
 	}
 
     ```
-  * ```sudo reboot -h now```
- * Note IP address
-  * ```ifconfig wlan0```
+	* ```sudo reboot -h now```
+	* Note IP address
+	```ifconfig wlan0```
 6. Check for updates:
- * ```sudo apt-get update
-      sudo apt-get upgrade
-   ```
+```sudo apt-get update
+   sudo apt-get upgrade
+```
 7. Install Re4son kernel
  * Follow the steps here - https://github.com/Re4son/Re4son-Pi-TFT-Setup
  * Rotate screen:
- 	* ```sudo nano /boot/config.txt```
- 		* rotate=270
+ 	```sudo nano /boot/config.txt```
+ 	```rotate=270```
 8. Remove existing Node:
 ```
     sudo apt-get remove nodered -y
