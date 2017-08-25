@@ -43,8 +43,9 @@ The camera uses 2 pi's:
 	* Note IP address
 		```ifconfig wlan0```
 6. Check for updates:
-	```sudo apt-get update
-   sudo apt-get upgrade
+	```
+	sudo apt-get update
+   	sudo apt-get upgrade
 	```
 7. Install Re4son kernel
 	* Follow the steps here - https://github.com/Re4son/Re4son-Pi-TFT-Setup
@@ -67,10 +68,12 @@ The camera uses 2 pi's:
 10. Disable Bluetooth:
 	```sudo systemctl disable bluetooth```
 11. Prevent screen from sleeping:
-	```sudo nano /etc/kbd/config```
+	*
+		```sudo nano /etc/kbd/config```
 		* BLANK_TIME=0
 		* POWERDOWN_TIME=0
-	```sudo nano /boot/cmdline.txt```
+	*
+		```sudo nano /boot/cmdline.txt```
 		* Add this to the end of the single line after a <space>
 		```consoleblank=0```
 12. Install DHCP:
@@ -88,13 +91,16 @@ The camera uses 2 pi's:
 
 	```
 13. Setup Ad-hoc Network:
-	* ```
+	* 
+	```
 		cd /etc/network
 		sudo cp interfaces interfaces-wifi
 		sudo nano interfaces-adhoc
 	```
 	* Edit this interfaces-adhoc file
-	```	auto lo
+
+	```	
+		auto lo
 		iface lo inet loopback
 		iface eth0 inet dhcp
 
