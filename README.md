@@ -21,7 +21,7 @@ The camera uses 2 pi's:
 2. Plug into HDMI monitor
 3. Login with default user:pi and password: raspberry
 4. Perform Initial Setup:
- * ``` sudo raspi-config```
+ * ```sudo raspi-config```
   * Advanced Options > Expand Filesystem
   * Change User Password
   * Localisation Options > Locale and Timezone
@@ -47,6 +47,21 @@ The camera uses 2 pi's:
  * ```sudo apt-get update```
  * ```sudo apt-get upgrade```
 7. Install Re4son kernel
- * https://github.com/Re4son/Re4son-Pi-TFT-Setup
-
+ * Follow the steps here - https://github.com/Re4son/Re4son-Pi-TFT-Setup
+ * Rotate screen:
+  * ```sudo nano /boot/config.txt```
+   * rotate=270
+8. Remove existing Node:
+ * ```
+    sudo apt-get remove nodered -y
+    sudo apt-get remove nodejs nodejs-legacy -y
+    sudo apt-get remove npm -y
+   ```
+9. Install Latest Node:
+ * ```
+   sudo curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+   sudo apt-get install nodejs -y
+   node -v
+   npm -v
+   ```
 ### Raspberry Pi Zero W - SnapPi
