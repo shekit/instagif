@@ -34,11 +34,10 @@ The camera uses 2 pi's:
 	* ```sudo nano /etc/wpa_supplicant/wpa_supplicant.conf```
 	* Add your ssid and password
 		```
-    network={
-	ssid=”<Your ssid>”
-	psk=”<Your pass>”
-	}
-
+		network={
+			ssid=”<Your ssid>”
+			psk=”<Your pass>”
+		}
 		```
 	* ```sudo reboot -h now```
 	* Note IP address
