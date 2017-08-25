@@ -64,4 +64,48 @@ The camera uses 2 pi's:
 	node -v
 	npm -v
 	```
+10. Disable Bluetooth:
+	```sudo systemctl disable bluetooth```
+11. Prevent screen from sleeping:
+	```sudo nano /etc/kbd/config```
+		* BLANK_TIME=0
+		* POWERDOWN_TIME=0
+	```sudo nano /boot/cmdline.txt```
+		* Add this to the end of the single line after a <space>
+		```consoleblank=0```
+12. Install DHCP:
+	* ```sudo apt-get install isc-dhcp-server```
+	* ```sudo nano /etc/dhcp/dhcpd.conf```
+	* Edit this file and reboot:
+	```	ddns-update-style interim;
+		default-lease-time 600;
+		max-lease-time 7200;
+		authoritative;
+		log-facility local7;
+		subnet 192.168.1.0 netmask 255.255.255.0 {
+			range 192.168.1.5 192.168.1.150;
+		}
+
+	```
+13. Setup Ad-hoc Network:
+	* ```
+		cd /etc/network
+		sudo cp interfaces interfaces-wifi
+		sudo nano interfaces-adhoc
+	```
+	* Edit this interfaces-adhoc file
+	```	auto lo
+		iface lo inet loopback
+		iface eth0 inet dhcp
+
+		auto wlan0
+		iface wlan0 inet static
+			address 192.168.1.1
+			netmask 255.255.255.0
+			wireless-channel 1
+			wireless-essid  Instagif
+			wireless-mode ad-hoc
+
+	```
+
 ### Raspberry Pi Zero W - SnapPi
