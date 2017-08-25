@@ -44,24 +44,25 @@ The camera uses 2 pi's:
  * Note IP address
   * ```ifconfig wlan0```
 6. Check for updates:
- * ```sudo apt-get update```
- * ```sudo apt-get upgrade```
+ * ```sudo apt-get update
+      sudo apt-get upgrade
+   ```
 7. Install Re4son kernel
  * Follow the steps here - https://github.com/Re4son/Re4son-Pi-TFT-Setup
  * Rotate screen:
-  * ```sudo nano /boot/config.txt```
-   * rotate=270
+ 	* ```sudo nano /boot/config.txt```
+ 		* rotate=270
 8. Remove existing Node:
- * ```
+```
     sudo apt-get remove nodered -y
     sudo apt-get remove nodejs nodejs-legacy -y
     sudo apt-get remove npm -y
-   ```
+```
 9. Install Latest Node:
- * ```
+```
    sudo curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
    sudo apt-get install nodejs -y
    node -v
    npm -v
-   ```
+```
 ### Raspberry Pi Zero W - SnapPi
