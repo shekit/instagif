@@ -58,13 +58,15 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 	```
     sudo apt-get remove nodered -y
     sudo apt-get remove nodejs nodejs-legacy -y
-    sudo apt-get remove npm -y```
+    sudo apt-get remove npm -y
+	```
 9. Install Latest Node:
 	```
 	sudo curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 	sudo apt-get install nodejs -y
 	node -v
-	npm -v```
+	npm -v
+	```
 10. Disable Bluetooth:
 	```
 	sudo systemctl disable bluetooth
@@ -87,13 +89,15 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 		log-facility local7;
 		subnet 192.168.1.0 netmask 255.255.255.0 {
 			range 192.168.1.5 192.168.1.150;
-		}```
+		}
+	```
 13. Setup Ad-hoc Network:
 	* 
 	```
 		cd /etc/network
 		sudo cp interfaces interfaces-wifi
-		sudo nano interfaces-adhoc```
+		sudo nano interfaces-adhoc
+	```
 	* Edit this interfaces-adhoc file
 
 	```	
@@ -107,7 +111,9 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 			netmask 255.255.255.0
 			wireless-channel 1
 			wireless-essid  Instagif
-			wireless-mode ad-hoc```
+			wireless-mode ad-hoc
+
+	```
 14. To change between interfaces:
 	* To use ad-hoc network:
 		* ```sudo cp /etc/network/interfaces-adhoc /etc/network/interfaces```
@@ -134,7 +140,8 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 		sudo apt-get install python-dev
 		sudo pip install pyzmq
 		sudo pip install zerorpc
-		sudo pip install msgpack-python --force-reinstall --upgrade```
+		sudo pip install msgpack-python --force-reinstall --upgrade
+	```
 18. Install FBCP:
 	* ```
 		git clone https://github.com/tasanakorn/rpi-fbcp
@@ -145,12 +152,14 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 		make
 		sudo install fbcp /usr/local/bin/fbcp
 		cd ~
-		sudo modprobe fbtft dma```
+		sudo modprobe fbtft dma
+	```
 19. Clone this repo:
 	* ```
 		git clone https://github.com/shekit/instagif.git
 		cd ~/instagif/node-camera
-		sudo npm install ```
+		sudo npm install 
+	```
 20. Create Launcher Script:
 	* ```
 		cd ~
@@ -160,7 +169,8 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 			cd ~/instagif/node-camera
 			python zero.py &
 			sudo node index.js
-		chmod +x launch.sh```
+		chmod +x launch.sh
+	```
 21. Create SystemD file:
 	* ```sudo nano /lib/systemd/system/instagif.service```
 	* Edit this file to only include:
@@ -175,7 +185,8 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 			User=pi
 
 			[Install]
-			WantedBy=multi-user.target```
+			WantedBy=multi-user.target
+		```
 	* Change file permissions:
 		* ```sudo chmod 644 /lib/systemd/system/instagif.service```
 	* Make it start at bootup:
@@ -191,7 +202,8 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 		cd /usr/local
 		sudo tar xzvf ~/node-v4.2.4-linux-armv6l.tar.gz --strip=1
 		# Test node version with node -v
-		sudo npm install -g npm```
+		sudo npm install -g npm
+	```
 3. Repeat steps 10-14, **enter IP 192.168.1.2**
 4. Install as above:
 	* omxplayer
@@ -203,7 +215,8 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 	* ```
 		git clone https://github.com/shekit/instagif.git
 		cd ~/instagif/node-snap
-		sudo npm install```
+		sudo npm install
+	```
 6. Create Launcher Script:
 	* ```
 		cd ~
@@ -211,7 +224,8 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 			#!/bin/bash
 			cd ~/instagif/node-snap
 			node index.js
-		chmod +x launch.sh```
+		chmod +x launch.sh
+	```
 7. Create SystemD file:
 	* ```sudo nano /lib/systemd/system/instagif.service```
 	* Edit this file to only include:
@@ -226,7 +240,9 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 			User=pi
 
 			[Install]
-			WantedBy=multi-user.target```
+			WantedBy=multi-user.target
+
+		```
 	* Change file permissions:
 		* ```sudo chmod 644 /lib/systemd/system/instagif.service```
 	* Make it start at bootup:
