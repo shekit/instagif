@@ -66,21 +66,21 @@ The camera uses 2 pi's:
 	npm -v
 	```
 10. Disable Bluetooth:
-	```sudo systemctl disable bluetooth```
+	```
+	sudo systemctl disable bluetooth
+	```
 11. Prevent screen from sleeping:
-	*
-		```sudo nano /etc/kbd/config```
+	* ```sudo nano /etc/kbd/config```
 		* BLANK_TIME=0
 		* POWERDOWN_TIME=0
-	*
-		```sudo nano /boot/cmdline.txt```
-		* Add this to the end of the single line after a <space>
-		```consoleblank=0```
+	* ```sudo nano /boot/cmdline.txt```
+		* Add this to the end of the single line after a <space> ```consoleblank=0```
 12. Install DHCP:
 	* ```sudo apt-get install isc-dhcp-server```
 	* ```sudo nano /etc/dhcp/dhcpd.conf```
 	* Edit this file and reboot:
-	```	ddns-update-style interim;
+	```	
+		ddns-update-style interim;
 		default-lease-time 600;
 		max-lease-time 7200;
 		authoritative;
@@ -88,7 +88,6 @@ The camera uses 2 pi's:
 		subnet 192.168.1.0 netmask 255.255.255.0 {
 			range 192.168.1.5 192.168.1.150;
 		}
-
 	```
 13. Setup Ad-hoc Network:
 	* 
@@ -113,5 +112,143 @@ The camera uses 2 pi's:
 			wireless-mode ad-hoc
 
 	```
+14. To change between interfaces:
+	* To use ad-hoc network:
+		* ```sudo cp /etc/network/interfaces-adhoc /etc/network/interfaces```
+	* TO use regular wifi-network
+		* ```sudo cp /etc/network/interfaces-wifi /etc/network/interfaces```
+
+15. Connect to Pi using SSH if needed from your computer:
+	* Select Instagif network
+	* ```ssh -lpi 192.168.1.1```
+16. Install Libraries:
+	* Picamera: ```sudo apt-get install python-picamera```
+	* MP4Box: ```sudo apt-get install -y gpac```
+	* AVConv: ```sudo apt-get install -y libav-tools```
+	* Omxplayer(if needed): ```sudo apt-get install -y omxplayer```
+	* Pip: ```sudo apt-get install python-pip```
+	* Git: ```sudo apt-get install git```
+	* Cmake: ```sudo apt-get install cmake```
+	* PiGPIO: ```sudo apt-get install pigpio``` 
+	* FBI: ```sudo apt-get install fbi```
+17. Install ZeroMQ(python 2.7):
+	* ```
+		sudo apt-get install libzmq-dev
+		sudo apt-get install libevent-dev
+		sudo apt-get install python-dev
+		sudo pip install pyzmq
+		sudo pip install zerorpc
+		sudo pip install msgpack-python --force-reinstall --upgrade
+
+	```
+18. Install FBCP:
+	* ```
+		git clone https://github.com/tasanakorn/rpi-fbcp
+		cd rpi-fbcp/
+		mkdir build
+		cd build/
+		cmake ..
+		make
+		sudo install fbcp /usr/local/bin/fbcp
+		cd ~
+		sudo modprobe fbtft dma
+
+	```
+19. Clone this repo:
+	* ```
+		git clone https://github.com/shekit/instagif.git
+		cd ~/instagif/node-camera
+		sudo npm install
+
+	```
+20. Create Launcher Script:
+	* ```
+	cd ~
+	sudo nano launch.sh
+		#!/bin/bash
+		fbcp &
+		cd ~/instagif/node-camera
+		python zero.py &
+		sudo node index.js
+	chmod +x launch.sh
+
+	```
+21. Create SystemD file:
+	* ```sudo nano /lib/systemd/system/instagif.service```
+	* Edit this file to only include:
+		* ```
+			[Unit]
+			Description=Instagif Auto Start
+			After=multi-user.target
+
+			[Service]
+			Type=idle
+			ExecStart=/home/pi/launch.sh
+			User=pi
+
+			[Install]
+			WantedBy=multi-user.target
+
+		```
+	* Change file permissions:
+		* ```sudo chmod 644 /lib/systemd/system/instagif.service```
+	* Make it start at bootup:
+		* ```sudo systemctl enable instagif.service```
 
 ### Raspberry Pi Zero W - SnapPi
+
+1. Repeat steps 1-8
+2. Install Node for Pi Zero:
+	* ```
+		cd ~
+		wget http://nodejs.org/dist/v4.2.4/node-v4.2.4-linux-armv6l.tar.gz
+		cd /usr/local
+		sudo tar xzvf ~/node-v4.2.4-linux-armv6l.tar.gz --strip=1
+		# Test node version with node -v
+		sudo npm install -g npm
+
+	```
+3. Repeat steps 10-14, *enter IP 192.168.1.2*
+4. Install as above:
+	* omxplayer
+	* cmake
+	* git
+	* fbcp
+	* fbi
+5. Clone repo:
+	* ```
+		git clone https://github.com/shekit/instagif.git
+		cd ~/instagif/node-snap
+		sudo npm install
+	```
+6. Create Launcher Script:
+	* ```
+	cd ~
+	sudo nano launch.sh
+		#!/bin/bash
+		cd ~/instagif/node-snap
+		node index.js
+	chmod +x launch.sh
+
+	```
+7. Create SystemD file:
+	* ```sudo nano /lib/systemd/system/instagif.service```
+	* Edit this file to only include:
+		* ```
+			[Unit]
+			Description=Instagif Auto Start
+			After=multi-user.target
+
+			[Service]
+			Type=idle
+			ExecStart=/home/pi/launch.sh
+			User=pi
+
+			[Install]
+			WantedBy=multi-user.target
+
+		```
+	* Change file permissions:
+		* ```sudo chmod 644 /lib/systemd/system/instagif.service```
+	* Make it start at bootup:
+		* ```sudo systemctl enable instagif.service```
