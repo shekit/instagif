@@ -141,7 +141,6 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 		sudo pip install pyzmq
 		sudo pip install zerorpc
 		sudo pip install msgpack-python --force-reinstall --upgrade
-
 	```
 18. Install FBCP:
 	* ```
@@ -154,14 +153,12 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 		sudo install fbcp /usr/local/bin/fbcp
 		cd ~
 		sudo modprobe fbtft dma
-
 	```
 19. Clone this repo:
 	* ```
 		git clone https://github.com/shekit/instagif.git
 		cd ~/instagif/node-camera
-		sudo npm install
-
+		sudo npm install 
 	```
 20. Create Launcher Script:
 	* ```
@@ -172,8 +169,7 @@ The camera uses 2 pi's. Follow the steps exactly as described and it should get 
 			cd ~/instagif/node-camera
 			python zero.py &
 			sudo node index.js
-		chmod +x launch.sh
-	```
+		chmod +x launch.sh```
 21. Create SystemD file:
 	* ```sudo nano /lib/systemd/system/instagif.service```
 	* Edit this file to only include:
