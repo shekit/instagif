@@ -8,7 +8,7 @@ You can read more about the entire build process here:
 
 ## Hardware Files
 
-All the 3D print files and Eagle files can be found in a separate repo here:
+All the 3D print files and Eagle files can be found in a separate repo here: https://github.com/shekit/instagif-hardware
 
 ## Setting up the Raspberry Pi's:
 
