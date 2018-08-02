@@ -1,6 +1,6 @@
 # Instagif Camera
 
-I built a camera that snaps a GIF and ejects a little cartridge so you can hold a moving photo in your hand! I'm calling it "Instagif". Don't ask me why I built it, it sounded like a fun challenge and I always wanted to hold a moving photo. If it isn't obvious, I was inspired by one of the classic polaroid cameras.
+I built a camera that snaps a GIF and ejects a little cartridge so you can hold a moving photo in your hand! I'm calling it "Instagif". Don't ask me why I built it, it sounded like a fun challenge and I always wanted to hold a moving photo. 
 
 ## Build Process
 
